@@ -1,0 +1,92 @@
+---
+title: 'Kaku terminal behavior: cursor, scrollback, and tab bar'
+description: 'Control cursor style, scrollback buffer, copy-on-select, working directory inheritance, tab bar, scrollbar, and macOS Option key behavior in kaku.lua.'
+---
+
+Kaku's terminal behavior is tuned out of the box for day-to-day development use, but every default is overridable in `~/.config/kaku/kaku.lua`. The settings below cover the core behavioral options — from how text is selected and copied to how new tabs and splits inherit your current working directory.
+
+## Cursor
+
+Set the cursor shape, thickness, and blink rate:
+
+```lua kaku.lua
+config.default_cursor_style = "BlinkingBar"
+config.cursor_thickness = "2px"
+config.cursor_blink_rate = 500
+```
+
+## Scrollback
+
+Control how many lines of terminal history are kept in memory:
+
+```lua kaku.lua
+config.scrollback_lines = 10000  -- default
+```
+
+## Copy on select
+
+Text is automatically copied to the clipboard when you release the mouse button after a selection. To disable this behavior:
+
+```lua kaku.lua
+config.copy_on_select = false
+```
+
+## Working directory inheritance
+
+By default, new windows, tabs, and pane splits inherit the working directory of the current pane. You can control each independently:
+
+```lua kaku.lua
+config.window_inherit_working_directory = true   -- new windows
+config.tab_inherit_working_directory = true       -- new tabs
+config.split_pane_inherit_working_directory = true -- new splits
+```
+
+## Tab bar
+
+The tab bar is hidden automatically when only one tab is open. Change its position or simplify how tab titles are displayed:
+
+```lua kaku.lua
+config.tab_bar_at_bottom = false           -- move tab bar to top
+config.tab_title_show_basename_only = true -- show "dirname" instead of "parent/dirname"
+```
+
+## Scrollbar
+
+The scrollbar is disabled by default. Enable it via `kaku config` or in Lua:
+
+```lua kaku.lua
+config.enable_scroll_bar = true
+```
+
+## macOS Option key
+
+Kaku configures the Option keys differently by default to suit terminal editing workflows: the left Option key sends Meta (useful for word navigation in Vim and Neovim), while the right Option key sends compose characters (for typing accented characters and symbols).
+
+```lua kaku.lua
+config.send_composed_key_when_left_alt_is_pressed = false  -- left Option = Meta
+config.send_composed_key_when_right_alt_is_pressed = true  -- right Option = Compose
+```
+
+## Enterprise proxy headers
+
+If your organization routes AI Assistant requests through a corporate proxy or API gateway, you can attach custom HTTP headers to every request. Create or edit `~/.config/kaku/assistant.toml`:
+
+```toml assistant.toml
+# ~/.config/kaku/assistant.toml
+custom_headers = ["X-Customer-ID: your-id", "X-Org: your-org"]
+```
+
+<Note>
+  The `Authorization` and `Content-Type` headers are reserved by Kaku and
+  cannot be overridden via `custom_headers`.
+</Note>
+
+## Tiling window managers
+
+Kaku is compatible with yabai and AeroSpace. If you see continuous window flickering, it is typically caused by the tiling manager conflicting with Kaku's fullscreen and resize logic. Disable Kaku's native fullscreen mode to resolve it:
+
+```lua kaku.lua
+config.native_macos_fullscreen_mode = false
+```
+
+You can also exclude Kaku from the tiling manager's managed window list as an alternative.

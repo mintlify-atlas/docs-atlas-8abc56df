@@ -1,0 +1,68 @@
+---
+title: 'Kaku configuration: kaku.lua and WezTerm Lua API'
+description: "Kaku auto-creates kaku.lua on first launch and loads bundled defaults before applying your overrides using WezTerm's full Lua API."
+---
+
+Kaku is configured through a single Lua file at `~/.config/kaku/kaku.lua`. On first launch, Kaku generates this file automatically with a commented template covering the most common options. Because Kaku is built on WezTerm, every WezTerm configuration option is available in `kaku.lua` — your overrides layer on top of Kaku's bundled defaults without replacing them.
+
+## Opening your config
+
+Open `~/.config/kaku/kaku.lua` with the terminal command `kaku config` or the keyboard shortcut `Cmd + ,`. Both methods open the file in your default `$EDITOR`.
+
+## How configuration loading works
+
+When Kaku starts, it resolves and executes the bundled `kaku.lua` shipped inside the application bundle. Your user config file is then evaluated in the same Lua environment, and any values you set overwrite the bundled defaults. This means you only need to include the settings you want to change.
+
+The full boilerplate that Kaku generates looks like this:
+
+```lua kaku.lua
+local wezterm = require 'wezterm'
+
+local function resolve_bundled_config()
+  local resource_dir = wezterm.executable_dir:gsub('MacOS/?$', 'Resources')
+  local bundled = resource_dir .. '/kaku.lua'
+  local f = io.open(bundled, 'r')
+  if f then f:close(); return bundled end
+  return '/Applications/Kaku.app/Contents/Resources/kaku.lua'
+end
+
+local config = {}
+local bundled = resolve_bundled_config()
+if bundled then
+  local ok, loaded = pcall(dofile, bundled)
+  if ok and type(loaded) == 'table' then config = loaded end
+end
+
+-- Your overrides go here:
+config.font_size = 16
+config.window_background_opacity = 0.95
+
+return config
+```
+
+<Note>
+  `kaku init` generates the full boilerplate with all available options as
+  comments. Most users only need to uncomment the lines they want to change.
+  Run `kaku reset` to restore the file to its generated defaults at any time.
+</Note>
+
+## WezTerm compatibility
+
+Kaku uses WezTerm's configuration system internally. Any option documented in the [WezTerm config reference](https://wezfurlong.org/wezterm/config/) works in `kaku.lua`. This gives you access to the complete WezTerm Lua API for advanced customization without Kaku imposing additional restrictions.
+
+## Explore configuration topics
+
+<CardGroup cols={2}>
+  <Card title="Appearance" icon="palette" href="/configuration/appearance">
+    Themes, fonts, transparency, padding, and window decorations.
+  </Card>
+  <Card title="Keybindings" icon="keyboard" href="/configuration/keybindings">
+    Default shortcuts and how to add custom key bindings.
+  </Card>
+  <Card title="Terminal behavior" icon="terminal" href="/configuration/terminal-behavior">
+    Cursor, scrollback, copy-on-select, tab bar, and Option key behavior.
+  </Card>
+  <Card title="WezTerm Lua API" icon="book" href="https://wezfurlong.org/wezterm/config/lua/">
+    Complete reference for all WezTerm configuration options.
+  </Card>
+</CardGroup>

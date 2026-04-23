@@ -1,0 +1,81 @@
+---
+title: "kaku ai — manage AI tools and Kaku Assistant"
+description: "Run kaku ai to open the AI settings TUI and configure Kaku Assistant, provider presets, and external AI coding tools like Claude Code, Codex, and Gemini CLI."
+---
+
+`kaku ai` opens an interactive TUI panel that gives you a single place to configure Kaku's built-in AI assistant and to manage settings for the external AI coding tools you use day-to-day. Changes take effect immediately and are saved to `~/.config/kaku/assistant.toml`.
+
+## Usage
+
+```bash
+kaku ai
+```
+
+## What it configures
+
+The panel has two sections.
+
+**Kaku Assistant** controls the built-in inline command suggestions and the chat overlay (`Cmd+L`):
+
+| Field | Description |
+|---|---|
+| `enabled` | Toggle command analysis suggestions on or off |
+| `api_key` | Your provider API key (e.g. `sk-...`) |
+| `model` | Model used for inline command suggestions (fast, cheap) |
+| `chat_model` | Model used for the chat overlay. Omit to reuse `model` |
+| `base_url` | API root URL for the chat-completions endpoint |
+| `custom_headers` | Extra HTTP headers for enterprise proxies or API gateways |
+
+**External AI coding tools** lets you configure launch settings and environment for tools such as Claude Code, Codex, Gemini CLI, Copilot CLI, and Kimi Code.
+
+## Provider presets
+
+The TUI includes built-in presets that auto-fill `base_url` and suggest available models:
+
+| Provider | Base URL | Example models |
+|---|---|---|
+| Copilot | `https://api.githubcopilot.com` | `gpt-4.1`, `gpt-4.5`, `claude-sonnet-4-5`, `o4-mini` |
+| Codex | `https://api.openai.com/v1` | `codex-mini-latest`, `o4-mini`, `o3` |
+| Gemini | `https://generativelanguage.googleapis.com` | `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.0-flash` |
+| Custom | (manual entry) | (manual entry) |
+
+## Config file
+
+All changes made in the TUI are saved to `~/.config/kaku/assistant.toml`. You can also edit this file directly. A minimal configuration looks like:
+
+```toml
+enabled = true
+api_key = "sk-..."
+model = "gpt-5.4-mini"
+chat_model = "gpt-5.4"
+base_url = "https://api.openai.com/v1"
+# custom_headers = ["X-Customer-ID: your-customer-id"]
+```
+
+<Note>
+`Authorization` and `Content-Type` headers are reserved and cannot be overridden via `custom_headers`.
+</Note>
+
+## Disabling Kaku Assistant
+
+To disable inline command suggestions, open the panel and toggle **Enabled** to off:
+
+```bash
+kaku ai
+# Toggle Enabled to Off in the panel
+```
+
+Alternatively, edit `~/.config/kaku/assistant.toml` directly:
+
+```toml
+enabled = false
+```
+
+## Web search (optional)
+
+The assistant supports an optional web search backend for the chat agent. Set `web_search_provider` to `brave`, `pipellm`, or `tavily` and provide a `web_search_api_key`. Configure this via `kaku ai` rather than editing the file manually.
+
+```toml
+# web_search_provider = "brave"
+# web_search_api_key = "your-key"
+```

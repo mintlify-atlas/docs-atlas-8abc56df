@@ -1,97 +1,65 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Kaku: A fast terminal built for AI coding"
+description: "Kaku is a GPU-accelerated macOS terminal with zero-config defaults, a built-in AI assistant, and full WezTerm Lua compatibility — ready to use on day one."
 ---
 
-## Setting up
+Kaku (書く, かく — Japanese for "to write") is a deeply customized terminal emulator built for AI-assisted coding workflows. It ships with sensible defaults, a curated shell suite, and a built-in AI assistant that recovers from errors and generates commands from plain English — all without requiring any initial configuration.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Download, install, and be productive in under two minutes.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Kaku AI Assistant" icon="robot" href="/features/ai-assistant">
+    Auto-fix failed commands and generate shell commands from natural language.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Configuration" icon="sliders" href="/configuration/overview">
+    Customize fonts, themes, keybindings, and more via Lua config.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="CLI Reference" icon="terminal" href="/cli/overview">
+    Explore all `kaku` subcommands — ai, config, doctor, init, and more.
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## Why Kaku?
 
-Everything you need to create world-class documentation.
+Most terminals force a choice between speed and features, or between good defaults and flexibility. Kaku resolves that tension: it starts fast, looks good, and works well without any setup — while giving you full control through WezTerm's Lua API when you want it.
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
+<CardGroup cols={2}>
+  <Card title="Shell Suite" icon="layer-group" href="/features/shell-suite">
+    Built-in zsh plugins, Starship, Delta, Lazygit, and Yazi — all wired up automatically.
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
+  <Card title="Lazygit & Yazi" icon="code-branch" href="/features/lazygit-yazi">
+    One-keystroke access to your git UI and file manager from any pane.
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
+  <Card title="Remote Files" icon="server" href="/features/remote-files">
+    Mount SSH remote filesystems locally and browse them with Yazi.
   </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
+  <Card title="FAQ & Troubleshooting" icon="circle-question" href="/faq">
+    Common questions, known issues, and quick fixes.
   </Card>
-</Columns>
+</CardGroup>
 
-## Need inspiration?
+## Get started
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<Steps>
+  <Step title="Download and install">
+    [Download the latest DMG](https://github.com/tw93/Kaku/releases/latest) and drag Kaku to your Applications folder, or install via Homebrew:
+
+    ```bash
+    brew install tw93/tap/kakuku
+    ```
+  </Step>
+  <Step title="Open Kaku">
+    Kaku is notarized by Apple and opens without security warnings. On first launch, it automatically sets up your shell environment.
+  </Step>
+  <Step title="Configure the AI assistant (optional)">
+    Run `kaku ai` to open the AI settings panel. Enter your API key and enable the Kaku Assistant for error recovery and command generation.
+  </Step>
+  <Step title="Customize to your taste">
+    Open `~/.config/kaku/kaku.lua` with `kaku config` or `Cmd + ,` to override fonts, themes, keybindings, and more.
+  </Step>
+</Steps>
+
+<Note>
+  Kaku is macOS-only. Windows and Linux support may come in the future.
+</Note>

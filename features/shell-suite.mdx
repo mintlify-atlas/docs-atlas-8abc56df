@@ -1,0 +1,76 @@
+---
+title: "Kaku shell suite: zsh plugins and power tools"
+description: "Curated set of shell plugins and optional tools (Starship, Delta, Lazygit, Yazi) that Kaku sets up automatically in your shell environment."
+---
+
+Kaku ships a curated set of shell plugins that load automatically inside every Kaku session without any manual configuration. On top of the built-in plugins, `kaku init` can install a suite of optional power tools — Starship, Delta, Lazygit, and Yazi — to give you a fast, modern shell workflow from day one. Fish users are fully supported alongside the default zsh setup.
+
+## Built-in zsh plugins
+
+The following plugins are sourced automatically when you open a Kaku pane with zsh. No `.zshrc` edits are required.
+
+| Plugin | What it does |
+| :--- | :--- |
+| **z** | Smarter `cd` that learns your most-used directories. Use `z <dir>` to jump, `z -l <dir>` to list matches, and `z -t` to jump to the most recent match |
+| **zsh-completions** | Extended tab completions for common CLI tools |
+| **zsh-syntax-highlighting** | Real-time command coloring and error highlighting as you type |
+| **zsh-autosuggestions** | Fish-style history-based completions that appear as you type |
+
+## Fish support
+
+Run `kaku init` to provision the fish integration file at `~/.config/kaku/fish/kaku.fish`. Source this file in your `config.fish` to enable Kaku's shell hooks (smart tab, the `y` wrapper, and natural language command generation) inside fish sessions.
+
+Run `kaku doctor` at any time to verify that both zsh and fish integration paths are correctly configured.
+
+## Optional tools
+
+`kaku init` can install the following tools. Each is independent — skip any you don't need.
+
+<CardGroup cols={2}>
+  <Card title="Starship" icon="star">
+    Fast, customizable prompt with git status, language version, and environment info. Works in both zsh and fish.
+  </Card>
+  <Card title="Delta" icon="code">
+    Syntax-highlighting pager for `git diff` and `git grep`. Replaces the default diff output with colored, line-numbered output.
+  </Card>
+  <Card title="Lazygit" icon="code-branch">
+    Terminal git UI. Launch instantly with `Cmd + Shift + G` from any Kaku pane.
+  </Card>
+  <Card title="Yazi" icon="folder-open">
+    Terminal file manager with preview support. Launch with `Cmd + Shift + Y` or the `y` shell wrapper.
+  </Card>
+</CardGroup>
+
+You can also install any of these manually:
+
+```bash
+brew install starship
+brew install git-delta
+brew install lazygit
+brew install yazi
+```
+
+## Disabling Smart Tab
+
+Kaku's Smart Tab provides completion suggestions via a built-in widget. If you use your own completion workflow such as `fzf-tab`, disable Smart Tab by setting the environment variable before the Kaku shell integration is sourced.
+
+<Tabs>
+  <Tab title="zsh">
+    ```zsh
+    export KAKU_SMART_TAB_DISABLE=1
+    ```
+  </Tab>
+  <Tab title="fish">
+    ```fish
+    set -gx KAKU_SMART_TAB_DISABLE 1
+    ```
+  </Tab>
+</Tabs>
+
+## Verifying shell integration
+
+Run `kaku doctor` to check that the shell integration is active for your current shell. The doctor panel reports the detected zsh and fish integration paths and flags any missing or misconfigured files.
+
+```bash
+kaku doctor
+```

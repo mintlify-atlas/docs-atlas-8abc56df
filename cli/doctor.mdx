@@ -1,0 +1,79 @@
+---
+title: "kaku doctor — diagnose shell and runtime health"
+description: "Run kaku doctor to verify shell integration, PATH entries, wrapper script health, and optional tool installations, with built-in auto-fix for common problems."
+---
+
+`kaku doctor` runs a structured set of diagnostics across four groups — Health, Environment, Shell Integration, and Runtime — and prints a summary of what is working and what needs attention. It is the recommended first step whenever the `kaku` command stops working or shell integration feels broken.
+
+## Usage
+
+```bash
+kaku doctor
+```
+
+To apply safe automatic fixes and then re-run diagnostics in one step:
+
+```bash
+kaku doctor --fix
+```
+
+## What it checks
+
+<AccordionGroup>
+  <Accordion title="Health">
+    Rolls up the results of all other checks into an overall status: **OK**, **WARN**, or **FAIL**. Reports the Kaku version and a count of ok / warn / fail / info items. If any issues are detected, it suggests running `kaku init --update-only` as a first recovery step.
+  </Accordion>
+  <Accordion title="Environment">
+    - **Current shell** — confirms `$SHELL` is set to zsh or fish (the two managed shells). Reports a warning for unsupported shells.
+    - **PATH contains Kaku managed bin** — checks that `~/.config/kaku/zsh/bin` (or `fish/bin`) is on `$PATH`. A missing entry here means the `kaku` command may not be found in new shells.
+    - **zshrc / fish conf.d entry point** — reports the resolved path of the active shell startup file and whether it sources the Kaku init file.
+  </Accordion>
+  <Accordion title="Shell integration">
+    - **Managed zsh init file** — verifies that `~/.config/kaku/zsh/kaku.zsh` exists. Missing = WARN.
+    - **Managed fish init file** — verifies that `~/.config/kaku/fish/kaku.fish` exists (fish users only).
+    - **Kaku wrapper script** — checks that the shell wrapper at `~/.config/kaku/zsh/bin/kaku` (or `fish/bin/kaku`) exists and is executable. Missing = FAIL.
+    - **zshrc sources Kaku init** — scans `~/.zshrc` for an active `source` line pointing to `kaku.zsh`. Detects and flags legacy guarded variants that should be normalized.
+    - **fish conf.d sources Kaku init** — confirms `~/.config/fish/conf.d/kaku.fish` has a valid source entry.
+    - **External autosuggest compatibility** — detects `kiro-cli` or Amazon Q CLI on `$PATH` and checks that the zsh init file is in compatibility mode to prevent widget conflicts.
+  </Accordion>
+  <Accordion title="Runtime">
+    - **Kaku app binary** — searches for the `kaku` executable in `$KAKU_BIN`, the current process path, `/Applications/Kaku.app/Contents/MacOS/kaku`, and `~/Applications/Kaku.app/Contents/MacOS/kaku`.
+    - **Wrapper execution probe** — actually runs the wrapper with `--version` and reports whether it can successfully reach the Kaku binary. Times out after 5 seconds.
+    - **Login shell integration probe** — reports that Doctor intentionally skips executing a login shell to avoid side effects from plugins or network tools. Describes how to validate manually.
+    - **Local network troubleshooting** (macOS only) — informational tips for diagnosing cases where LAN access works in other terminals but not Kaku.
+  </Accordion>
+</AccordionGroup>
+
+## Interpreting output
+
+Each check prints one of four status icons:
+
+| Icon | Label | Meaning |
+|---|---|---|
+| `✓` | OK | Check passed |
+| `!` | WARN | Works but setup is incomplete |
+| `x` | FAIL | Something is broken |
+| `i` | INFO | Informational only, no action needed |
+
+## Auto-fix
+
+When Doctor detects a WARN or FAIL, it offers to run `kaku init --update-only` automatically. You can also trigger this explicitly:
+
+```bash
+kaku doctor --fix
+```
+
+This runs init in non-interactive mode, then re-runs all checks so you can see whether the fix resolved the issue.
+
+## Recovery when `kaku` command is missing
+
+If the `kaku` command itself is not found, run init directly from the app binary:
+
+```bash
+/Applications/Kaku.app/Contents/MacOS/kaku init --update-only && exec zsh -l
+kaku doctor
+```
+
+<Warning>
+Doctor reports the **current process environment**, which may differ from a Terminal login shell. PATH values shown in Doctor reflect how Kaku was launched, not necessarily what an interactive `zsh -l` would see.
+</Warning>

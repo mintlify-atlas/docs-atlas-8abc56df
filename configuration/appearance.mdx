@@ -1,0 +1,90 @@
+---
+title: "Customize Kaku's appearance: themes and fonts"
+description: 'Set dark or light themes, override colors, change fonts, adjust font size and line height, and configure window transparency in kaku.lua.'
+---
+
+Kaku ships with two built-in color schemes — Kaku Dark and Kaku Light — and automatically follows the macOS system appearance setting. Every visual property, from font choice to window blur radius, is controlled through `~/.config/kaku/kaku.lua` using WezTerm's Lua configuration API. The options below cover the full appearance surface area exposed by Kaku's bundled defaults.
+
+## Theme
+
+By default, Kaku switches between Kaku Dark and Kaku Light automatically when macOS changes its system appearance. To lock the theme to one mode:
+
+```lua kaku.lua
+config.color_scheme = "Kaku Dark"   -- always dark
+config.color_scheme = "Kaku Light"  -- always light
+```
+
+## Color overrides
+
+You can remap individual hex color values to keep visual consistency when programs output their own hardcoded colors. The key is the output color and the value is the replacement:
+
+```lua kaku.lua
+config.color_overrides = {
+  ['#6E6E6E'] = '#3A3942',
+}
+```
+
+## Font
+
+Kaku defaults to JetBrains Mono with PingFang SC as a CJK fallback. Ligatures are disabled by default to keep code readable. To use a different font:
+
+```lua kaku.lua
+config.font = wezterm.font("Fira Code")
+```
+
+To re-enable ligatures after setting a custom font (or on the default font):
+
+```lua kaku.lua
+config.harfbuzz_features = {}
+```
+
+<Note>
+  Kaku's theme-aware font weight system only applies to the default JetBrains
+  Mono stack. Once you set `config.font`, Kaku will no longer manage its weight
+  automatically.
+</Note>
+
+## Font size
+
+Kaku auto-selects 15 px on standard-resolution displays and 17 px on HiDPI/Retina displays. To override the auto-detected size:
+
+```lua kaku.lua
+config.font_size = 16
+```
+
+## Line height
+
+```lua kaku.lua
+config.line_height = 1.28  -- default
+```
+
+## Window transparency
+
+```lua kaku.lua
+config.window_background_opacity = 0.92
+config.macos_window_background_blur = 20  -- optional blur (0–100)
+```
+
+Setting `macos_window_background_blur` to `0` disables the blur effect while preserving transparency.
+
+## Traffic lights (macOS)
+
+By default, Kaku embeds the macOS traffic light buttons (close, minimize, zoom) into the tab bar area using `INTEGRATED_BUTTONS|RESIZE`. To hide the close, minimize, and zoom buttons while keeping resize edges and tab-bar dragging:
+
+```lua kaku.lua
+config.window_decorations = "RESIZE"
+```
+
+`RESIZE` preserves the ability to resize the window from its edges and drag it by the tab bar — it only removes the button controls.
+
+## Padding
+
+```lua kaku.lua
+config.window_padding = { left = '24px', right = '24px', top = '40px', bottom = '20px' }
+```
+
+<Warning>
+  `window_padding` values must include the `'px'` unit suffix. Plain numbers
+  without `'px'` are interpreted as terminal cell units, which will produce
+  unexpected results.
+</Warning>

@@ -1,0 +1,46 @@
+---
+title: "Browse SSH remote files with Kaku"
+description: "Mount a remote SSH filesystem locally via sshfs and browse it with Yazi using Cmd+Shift+R from any active SSH pane in Kaku."
+---
+
+Kaku lets you browse a remote server's filesystem as if it were local. From any pane running an active SSH session, press `Cmd + Shift + R` and Kaku automatically detects the SSH target, mounts the remote filesystem via sshfs, and opens Yazi on the mount — no manual mounting or path setup required.
+
+## How it works
+
+<Steps>
+  <Step title="Start an SSH session">
+    Open a pane and connect to your remote host as you normally would:
+
+    ```bash
+    ssh user@example.com
+    ```
+  </Step>
+  <Step title="Press Cmd + Shift + R">
+    Kaku reads the SSH target from the active pane, mounts the remote filesystem locally at:
+
+    ```text
+    ~/Library/Caches/dev.kaku/sshfs/<host>
+    ```
+
+    Then it opens Yazi on that mount point.
+  </Step>
+  <Step title="Browse and edit">
+    Navigate the remote filesystem in Yazi. Files are accessed over sshfs, so edits are written directly to the remote host.
+  </Step>
+</Steps>
+
+## Requirements
+
+- **sshfs** installed on your local machine:
+
+  ```bash
+  brew install macfuse sshfs
+  ```
+
+- **Key-based (passwordless) SSH authentication** configured for the remote host. Kaku cannot mount the filesystem if a password prompt is required.
+
+- An **active SSH session** running in the current Kaku pane when you press `Cmd + Shift + R`.
+
+<Warning>
+  `Cmd + Shift + R` is for **remote** filesystems accessed over SSH. To open Yazi on your **local** filesystem, use `Cmd + Shift + Y` instead. Using the wrong shortcut in a non-SSH pane will produce an error.
+</Warning>

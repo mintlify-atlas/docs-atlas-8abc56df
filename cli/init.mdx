@@ -1,0 +1,88 @@
+---
+title: "kaku init — set up shell integration"
+description: "Run kaku init to set up zsh or fish shell integration, install the kaku wrapper script, and optionally install Starship, Delta, Lazygit, and Yazi."
+---
+
+`kaku init` is the setup command that wires Kaku into your shell. It creates the managed init files, installs the `kaku` wrapper script on your PATH, and optionally installs companion tools via Homebrew. Kaku runs `kaku init` automatically the first time you launch the app.
+
+<Note>
+`kaku init` is currently supported on **macOS only**. Running it on other platforms returns an error.
+</Note>
+
+## Usage
+
+<Tabs>
+  <Tab title="Interactive setup">
+    ```bash
+    kaku init
+    ```
+    Runs the full interactive setup, including prompts to install optional tools.
+  </Tab>
+  <Tab title="Non-interactive refresh">
+    ```bash
+    kaku init --update-only
+    ```
+    Refreshes shell integration files and the wrapper script without any interactive prompts. Use this for scripted recovery or after an update.
+  </Tab>
+</Tabs>
+
+## What it does
+
+<Steps>
+  <Step title="Ensure config exists">
+    Creates `~/.config/kaku/` and a default `kaku.lua` if they do not already exist.
+  </Step>
+  <Step title="Install the kaku wrapper script">
+    Writes an executable shell script to:
+    - `~/.config/kaku/zsh/bin/kaku` (zsh users)
+    - `~/.config/kaku/fish/bin/kaku` (fish users)
+
+    This wrapper resolves the Kaku app binary by checking `$KAKU_BIN`, then `/Applications/Kaku.app/Contents/MacOS/kaku`, then `~/Applications/Kaku.app/Contents/MacOS/kaku`.
+  </Step>
+  <Step title="Run shell integration setup">
+    Detects your current shell and runs the appropriate setup script:
+    - **zsh** → `setup_zsh.sh` — creates `~/.config/kaku/zsh/kaku.zsh` and adds a `source` line to `~/.zshrc`
+    - **fish** → `setup_fish.sh` — creates `~/.config/kaku/fish/kaku.fish` and adds `~/.config/fish/conf.d/kaku.fish`
+  </Step>
+  <Step title="Offer optional tools (interactive mode only)">
+    Prompts to install the following tools via Homebrew if they are not already present:
+    - **Starship** — cross-shell prompt
+    - **Delta** — improved `git diff` output
+    - **Lazygit** — terminal UI for git
+    - **Yazi** — terminal file manager
+  </Step>
+</Steps>
+
+## First launch
+
+Kaku runs `kaku init` automatically on first launch. You do not need to run it manually unless you are recovering from a broken setup or reinstalling.
+
+## Recovering a missing `kaku` command
+
+If the `kaku` command disappears from your shell after an update or config change, restore it without interactive prompts:
+
+```bash
+/Applications/Kaku.app/Contents/MacOS/kaku init --update-only
+exec zsh -l
+```
+
+Then verify the repair:
+
+```bash
+kaku doctor
+```
+
+## Files created or modified
+
+| File | Purpose |
+|---|---|
+| `~/.config/kaku/zsh/kaku.zsh` | Managed zsh init file (PATH, plugins, aliases) |
+| `~/.config/kaku/zsh/bin/kaku` | Wrapper script that resolves the Kaku binary |
+| `~/.config/kaku/fish/kaku.fish` | Managed fish init file |
+| `~/.config/kaku/fish/bin/kaku` | Wrapper script (fish) |
+| `~/.config/fish/conf.d/kaku.fish` | fish conf.d entry point that sources the managed init file |
+| `~/.zshrc` | Receives a `source` line pointing to `kaku.zsh` |
+
+<Tip>
+To undo everything `kaku init` set up, run `kaku reset`. To verify the current state of your integration, run `kaku doctor`.
+</Tip>

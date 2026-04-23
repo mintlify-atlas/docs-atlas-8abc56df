@@ -1,0 +1,73 @@
+---
+title: "kaku config — open and edit your Kaku config"
+description: "Run kaku config to open kaku.lua in your default editor, or use the settings TUI to toggle scrollbar, tab position, basename display, and other common options."
+---
+
+`kaku config` opens Kaku's Lua configuration file in your system default editor and launches the settings TUI so you can toggle common options without writing code. It is the primary way to customize Kaku's appearance, behavior, and keybindings.
+
+## Usage
+
+```bash
+kaku config
+```
+
+You can also open the config from inside Kaku with the keyboard shortcut `Cmd+,`.
+
+## Config file location
+
+Kaku stores its configuration at:
+
+```
+~/.config/kaku/kaku.lua
+```
+
+`kaku config` ensures this file exists (creating it from defaults if needed) and then opens it in whatever editor your system considers the default — typically the value of `$EDITOR` or `$VISUAL`.
+
+## Command-line overrides
+
+### Use a custom config file
+
+Pass `--config-file` to load a different Lua file instead of the default:
+
+```bash
+kaku --config-file /path/to/custom.lua
+```
+
+This flag conflicts with `--skip-config` (`-n`).
+
+### Override individual values
+
+Pass `--config` to temporarily override a specific configuration key without editing the file. The value takes effect for that Kaku session only:
+
+```bash
+kaku --config font_size=18
+```
+
+You can repeat `--config` to override multiple keys at once:
+
+```bash
+kaku --config font_size=18 --config window_padding_left=8
+```
+
+### Skip config entirely
+
+Use `-n` (or `--skip-config`) to start Kaku without loading `kaku.lua` at all. Useful for debugging configuration issues:
+
+```bash
+kaku -n
+```
+
+## Settings TUI
+
+The `kaku config` command also opens an interactive settings panel where you can toggle options such as:
+
+- Scrollbar visibility
+- Tab bar position
+- Basename display in the tab title
+- And other common preferences
+
+Changes made in the TUI are written back to `kaku.lua` automatically.
+
+<Tip>
+If you want to inspect the effective configuration after all overrides are applied, use `kaku doctor` — it reports the resolved config file path and any relevant environment details.
+</Tip>

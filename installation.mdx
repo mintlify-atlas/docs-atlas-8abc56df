@@ -1,0 +1,85 @@
+---
+title: "Install Kaku on macOS via DMG or Homebrew"
+description: "Install Kaku via DMG or Homebrew, complete first-launch shell setup, verify with kaku doctor, and recover if the kaku command goes missing from your PATH."
+---
+
+Kaku is a macOS-only application. There is no Windows or Linux version at this time — the macOS experience is being polished before expanding to other platforms. Installation takes two steps: get the app, then let it configure your shell on first launch.
+
+## System requirements
+
+- macOS (Apple Silicon or Intel)
+- zsh or fish as your login shell
+
+## Install Kaku
+
+<Tabs>
+  <Tab title="DMG">
+    1. Go to the [Kaku releases page](https://github.com/tw93/Kaku/releases/latest) and download the `.dmg` file.
+    2. Open the DMG and drag **Kaku.app** to your **Applications** folder.
+    3. Eject the DMG.
+    4. Launch Kaku from Applications or Spotlight.
+
+    The app is notarized by Apple. No Gatekeeper warning appears on first open.
+  </Tab>
+  <Tab title="Homebrew">
+    Run the following command in any terminal:
+
+    ```bash
+    brew install tw93/tap/kakuku
+    ```
+
+    <Note>
+      Install from the `tw93/tap` tap using the formula name `kakuku`. Do **not** run `brew install kaku` — there is an older, unrelated package with that name on Homebrew that will install the wrong application. If you see checksum errors later, run `brew upgrade tw93/tap/kakuku` directly.
+    </Note>
+
+    Once installed, launch Kaku from Applications or run `open -a Kaku` from your terminal.
+  </Tab>
+</Tabs>
+
+## First launch and shell setup
+
+When you open Kaku for the first time, it automatically runs `kaku init` internally. This step:
+
+- Detects your login shell (zsh or fish)
+- Installs a `kaku` wrapper script at `~/.config/kaku/<shell>/bin/kaku`
+- Sources shell integration so the `kaku` command is available in your PATH
+- Sets up the `y` directory-syncing wrapper for yazi
+
+You do not need to run `kaku init` manually after a normal installation.
+
+## Verifying your installation
+
+After first launch, open a new shell session and run:
+
+```bash
+kaku doctor
+```
+
+This command checks shell integration, environment variables, and runtime health, and reports any issues with instructions on how to fix them.
+
+## Recovering a missing `kaku` command
+
+If the `kaku` command disappears from your PATH — for example after a system update or a manual config change — you can re-run shell initialization directly from the app binary:
+
+<Warning>
+  If `kaku` is not found in your PATH, run this recovery command using the full path to the Kaku binary, then reload your shell:
+
+  ```bash
+  /Applications/Kaku.app/Contents/MacOS/kaku init --update-only && exec zsh -l
+  ```
+
+  Then verify the fix with:
+
+  ```bash
+  kaku doctor
+  ```
+</Warning>
+
+The `--update-only` flag refreshes shell integration silently, without interactive prompts. If your Kaku app lives in `~/Applications` instead of `/Applications`, adjust the path accordingly.
+
+## Shell support
+
+| Shell | Support |
+| :--- | :--- |
+| zsh | Primary — full integration, `y` wrapper, prompt plugins |
+| fish | Supported via `kaku init` — integration and `y` wrapper |

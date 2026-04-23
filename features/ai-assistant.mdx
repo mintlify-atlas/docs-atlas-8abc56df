@@ -1,0 +1,99 @@
+---
+title: "Kaku AI Assistant: error recovery and command generation"
+description: "Built-in AI assistant that auto-fixes failed commands and generates shell commands from natural language using any OpenAI-compatible provider."
+---
+
+Kaku ships a built-in AI assistant with two modes: automatic error recovery that triggers whenever a command exits with a non-zero status, and on-demand command generation that turns a plain-English description into a ready-to-run shell command. Both modes share the same provider configuration and respect the same safety rules — dangerous commands are always loaded for your review, never auto-executed.
+
+## Setup
+
+<Steps>
+  <Step title="Open the AI settings panel">
+    Run `kaku ai` from any terminal or press `Cmd + Shift + A` inside Kaku to open the AI settings panel.
+  </Step>
+  <Step title="Enable Kaku Assistant">
+    Toggle **Kaku Assistant** on inside the panel.
+  </Step>
+  <Step title="Select a provider">
+    Choose a provider from the list. Selecting a preset auto-fills the base URL and populates the model dropdown.
+
+    | Provider | Base URL | Models |
+    | :--- | :--- | :--- |
+    | Copilot | `https://api.githubcopilot.com` | `gpt-4.1`, `gpt-4.5`, `claude-sonnet-4-5`, `o4-mini` |
+    | Codex | `https://api.openai.com/v1` | `codex-mini-latest`, `o4-mini`, `o3` |
+    | Gemini | `https://generativelanguage.googleapis.com` | `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.0-flash` |
+    | Custom | (manual) | (free text) |
+  </Step>
+  <Step title="Enter your API key">
+    Paste your provider API key into the **API key** field and save.
+  </Step>
+</Steps>
+
+## Modes
+
+<AccordionGroup>
+  <Accordion title="Error recovery">
+    When a command exits with a non-zero status, Kaku sends the failed command, exit code, working directory, and current git branch to the LLM and displays a suggested fix inline. Press `Cmd + Shift + E` to paste the suggestion into the prompt.
+
+    Dangerous commands such as `rm -rf` or `git reset --hard` are pasted into the prompt but never auto-executed — you must press Enter to confirm.
+
+    The assistant does **not** trigger on:
+
+    - `Ctrl+C` exits
+    - Help flags (e.g. `--help`, `-h`)
+    - Bare package manager calls (e.g. `npm`, `brew`)
+    - `git pull` conflicts
+    - Non-shell foreground processes
+  </Accordion>
+  <Accordion title="Natural language to command">
+    Type `# <description>` at the shell prompt and press Enter. Kaku intercepts the line before the shell sees it, sends your query along with the current directory and git branch to the LLM, and injects the resulting command back into the prompt ready to review and run.
+
+    ```text
+    # list all files modified in the last 7 days
+    # find and kill the process on port 3000
+    # compress the src folder excluding node_modules
+    ```
+
+    The `#` prefix works in both zsh and fish. The original query stays visible while the request is in flight. If the model cannot produce a safe command, it injects a short explanation instead. Dangerous commands are loaded into the prompt but flagged for review — they are never auto-executed.
+  </Accordion>
+</AccordionGroup>
+
+## Configuration file
+
+The assistant configuration lives at `~/.config/kaku/assistant.toml`. Kaku creates this file with defaults on first launch; you can edit it directly or use the `kaku ai` panel.
+
+```toml ~/.config/kaku/assistant.toml
+enabled = true
+# api_key = "<your_api_key>"
+model = "gpt-5.4-mini"
+chat_model = "gpt-5.4"
+base_url = "https://api.openai.com/v1"
+# custom_headers = ["X-Customer-ID: your-customer-id"]
+```
+
+| Field | Description |
+| :--- | :--- |
+| `enabled` | `true` to enable the assistant, `false` to disable it |
+| `api_key` | Your provider API key |
+| `model` | Model used for inline error recovery and command generation |
+| `chat_model` | Model used for the AI chat overlay (`Cmd + L`). Omit to reuse `model` |
+| `base_url` | OpenAI-compatible API root URL |
+| `custom_headers` | Extra HTTP headers for enterprise proxies, e.g. `["X-Customer-ID: your-id"]` |
+
+<Note>
+  `Authorization` and `Content-Type` are reserved headers and cannot be overridden via `custom_headers`.
+</Note>
+
+## AI tools config
+
+The `kaku ai` panel also manages configuration for external AI coding tools. You can set API keys and model preferences for:
+
+- Claude Code
+- Codex
+- Gemini CLI
+- Copilot CLI
+- Kimi Code
+
+## Disabling the assistant
+
+Set `enabled = false` in `~/.config/kaku/assistant.toml`, or toggle **Kaku Assistant** off in the `kaku ai` panel. Error recovery and natural language generation both stop immediately — no restart required.

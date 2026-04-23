@@ -1,0 +1,184 @@
+---
+title: "Kaku FAQ: common questions and troubleshooting"
+description: "Common Kaku questions on platform support, config quirks, shell integration, AI assistant setup, and tiling window manager compatibility — with direct answers."
+---
+
+Kaku is a macOS terminal with opinionated defaults and deep Lua configurability. Most questions come down to one of three things: a missing `'px'` suffix, appending to a config table instead of replacing it, or a shell integration that hasn't been sourced yet. The answers below address all of these patterns and more, drawn directly from the project's FAQ document.
+
+<AccordionGroup>
+  <Accordion title="Is there a Windows or Linux version?">
+    Not currently. Kaku is macOS-only while the macOS experience is being polished. Windows and Linux support may come later.
+  </Accordion>
+
+  <Accordion title="Can I use a transparent window?">
+    Yes. Add the following overrides to `~/.config/kaku/kaku.lua` after loading the bundled config:
+
+    ```lua kaku.lua
+    config.window_background_opacity = 0.92
+    config.macos_window_background_blur = 20  -- optional blur, 0–100
+    ```
+
+    Set `macos_window_background_blur` to `0` to disable the blur while keeping transparency.
+  </Accordion>
+
+  <Accordion title="How do I turn off copy on select?">
+    Add the following line to your `~/.config/kaku/kaku.lua`:
+
+    ```lua kaku.lua
+    config.copy_on_select = false
+    ```
+  </Accordion>
+
+  <Accordion title="How do I customize keybindings?">
+    Append to `config.keys` — do not replace the table. Replacing it removes all of Kaku's built-in shortcuts.
+
+    ```lua kaku.lua
+    config.keys[#config.keys + 1] = {
+      key = "RightArrow",
+      mods = "CMD|SHIFT",
+      action = wezterm.action.ActivatePaneDirection("Right"),
+    }
+    ```
+
+    See the keybindings and configuration docs for more examples.
+  </Accordion>
+
+  <Accordion title="Can I control working directory inheritance?">
+    Yes, independently for windows, tabs, and splits:
+
+    ```lua kaku.lua
+    config.window_inherit_working_directory = true
+    config.tab_inherit_working_directory = true
+    config.split_pane_inherit_working_directory = true
+    ```
+
+    All three options are enabled by default.
+  </Accordion>
+
+  <Accordion title="How do I disable Kaku Assistant?">
+    Run `kaku ai`, open the Kaku Assistant settings page, and set **Enabled** to **Off**. Or edit `~/.config/kaku/assistant.toml` directly:
+
+    ```toml assistant.toml
+    enabled = false
+    ```
+  </Accordion>
+
+  <Accordion title="How do I use a custom LLM provider?">
+    Run `kaku ai`, select **Custom** from the Provider dropdown, then enter your base URL and API key manually. The URL must be OpenAI-compatible and point to a `/v1/chat/completions` endpoint.
+  </Accordion>
+
+  <Accordion title="How do I restore the default config?">
+    ```bash
+    kaku reset
+    ```
+
+    This removes Kaku's shell integration, strips the managed theme block from `~/.config/kaku/kaku.lua`, and cleans up Kaku-managed git defaults (such as the delta pager). Run `kaku init` afterward to restore shell integration.
+  </Accordion>
+
+  <Accordion title="The kaku command is missing. How do I recover it?">
+    Run the following to reinitialize the CLI without touching your config:
+
+    ```bash
+    /Applications/Kaku.app/Contents/MacOS/kaku init --update-only
+    exec zsh -l
+    ```
+
+    Then run `kaku doctor` to verify everything is healthy.
+  </Accordion>
+
+  <Accordion title="How do I use Kaku's CLI from scripts?">
+    The `kaku cli` subcommand exposes pane and window control for use in shell scripts:
+
+    ```bash
+    kaku cli split-pane
+    kaku cli split-pane -- bash -c "echo hello"
+    kaku cli --help
+    ```
+
+    See the CLI reference doc for the full command list.
+  </Accordion>
+
+  <Accordion title="How do I enable the scrollbar?">
+    Open `kaku config` and toggle the scrollbar option, or add the following to `~/.config/kaku/kaku.lua`:
+
+    ```lua kaku.lua
+    config.enable_scroll_bar = true
+    ```
+  </Accordion>
+
+  <Accordion title="How do I change the font? My font change isn't taking effect.">
+    Font changes require explicitly setting `config.font`:
+
+    ```lua kaku.lua
+    config.font = wezterm.font('Your Font Name')
+    ```
+
+    <Note>
+      Kaku's theme-aware font weight system only applies to the default JetBrains Mono stack. Once you set a custom font, Kaku will no longer override its weight automatically.
+    </Note>
+  </Accordion>
+
+  <Accordion title="My window_padding change isn't working.">
+    `window_padding` values require a `'px'` unit suffix:
+
+    ```lua kaku.lua
+    config.window_padding = { left = '24px', right = '24px', top = '40px', bottom = '20px' }
+    ```
+
+    Plain numbers without `'px'` are interpreted as terminal cell units, which may not produce the padding you expect.
+  </Accordion>
+
+  <Accordion title="The screen jumps to the top while Claude Code is generating output.">
+    This is a known interaction between trackpad scroll and Claude Code's streaming output. If you accidentally scroll to the top mid-stream, pressing the down arrow or scrolling back down returns you to the current output position. A fix for the underlying jump behavior has been tracked and shipped in recent releases.
+  </Accordion>
+
+  <Accordion title="Cmd+Shift+Y sends a local path when inside an SSH session.">
+    `Cmd+Shift+Y` opens the local Yazi file manager. The remote-files feature is `Cmd+Shift+R`, which mounts the remote filesystem via sshfs before opening Yazi. Use `Cmd+Shift+R` when you are inside an SSH pane.
+  </Accordion>
+
+  <Accordion title="The y shell wrapper doesn't sync my directory on exit.">
+    The `y` wrapper requires Kaku's fish or zsh shell integration to be sourced. Check whether integration is active:
+
+    ```bash
+    kaku doctor
+    ```
+
+    A bare `yazi` call will not sync the directory — use `y` only after shell integration is confirmed healthy.
+  </Accordion>
+
+  <Accordion title="Homebrew can't find the binary / the wrong Kaku gets updated.">
+    There is an older unrelated package named `kaku` on Homebrew. Install Kaku using the tap to avoid conflicts:
+
+    ```bash
+    brew install tw93/tap/kakuku
+    ```
+
+    If you see checksum errors with `kaku update`, run `brew upgrade tw93/tap/kakuku` directly instead.
+  </Accordion>
+
+  <Accordion title="Claude Code notifications don't appear.">
+    Kaku's notification permission may not be granted. Go to **System Settings → Notifications → Kaku** and enable **Allow Notifications**, then restart Kaku.
+  </Accordion>
+
+  <Accordion title="The global hotkey doesn't work on non-QWERTY keyboards (e.g. Colemak).">
+    The default shortcut `Cmd+Opt+Ctrl+K` uses the physical QWERTY K position. On alternative layouts such as Colemak, this corresponds to a different key. Remap it in your config:
+
+    ```lua kaku.lua
+    table.insert(config.keys, {
+      key = 'k',  -- adjust to your layout's physical key
+      mods = 'CMD|OPT|CTRL',
+      action = wezterm.action.EmitEvent('toggle-global-window'),
+    })
+    ```
+  </Accordion>
+
+  <Accordion title="Can I use Kaku with tiling window managers (yabai, AeroSpace)?">
+    Kaku is compatible with yabai and AeroSpace. If you see continuous flickering, it is usually caused by the tiling WM fighting with Kaku's fullscreen and resize logic. Disabling Kaku's native fullscreen mode typically resolves it:
+
+    ```lua kaku.lua
+    config.native_macos_fullscreen_mode = false
+    ```
+
+    Alternatively, exclude Kaku from the tiling WM's managed window list.
+  </Accordion>
+</AccordionGroup>

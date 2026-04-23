@@ -1,0 +1,149 @@
+---
+title: 'Kaku keybindings: default shortcuts and custom bindings'
+description: 'All default keyboard shortcuts for window, tab, pane, shell editing, and Kaku features, plus how to add custom bindings without losing the defaults.'
+---
+
+All keybindings use macOS-native modifier keys: `Cmd` = Command, `Opt` = Option/Alt, `Ctrl` = Control. Kaku ships with a comprehensive set of defaults organized by function. You can extend these with your own bindings by appending to the `config.keys` table in `~/.config/kaku/kaku.lua`.
+
+## Default keybindings
+
+### Window
+
+| Action | Shortcut |
+| :--- | :--- |
+| New window | `Cmd + N` |
+| Close pane / tab / hide | `Cmd + W` |
+| Close current tab | `Cmd + Shift + W` |
+| Hide application | `Cmd + H` |
+| Minimize window | `Cmd + M` |
+| Toggle fullscreen | `Cmd + Ctrl + F` |
+| Quit | `Cmd + Q` |
+| Toggle global window | `Cmd + Opt + Ctrl + K` |
+
+<Note>
+  `Cmd + W` is context-aware: it closes the active pane when multiple panes are
+  open, closes the tab when multiple tabs exist, and otherwise hides the
+  application.
+</Note>
+
+### Tabs
+
+| Action | Shortcut |
+| :--- | :--- |
+| New tab | `Cmd + T` |
+| Switch to tab 1–9 | `Cmd + 1` – `Cmd + 9` |
+| Previous tab | `Cmd + Shift + [` |
+| Next tab | `Cmd + Shift + ]` |
+| Close tab | `Cmd + Shift + W` |
+| Reopen closed tab | `Cmd + Shift + T` |
+| Rename tab | Double-click tab title |
+
+### Panes
+
+| Action | Shortcut |
+| :--- | :--- |
+| Split vertical | `Cmd + D` |
+| Split horizontal | `Cmd + Shift + D` |
+| Toggle split direction | `Cmd + Shift + S` |
+| Zoom / unzoom pane | `Cmd + Shift + Enter` |
+| Navigate panes | `Cmd + Opt + Arrows` |
+| Resize pane | `Cmd + Ctrl + Arrows` |
+| Broadcast input to current tab | `Cmd + Opt + I` |
+| Broadcast input to all tabs | `Cmd + Shift + I` |
+
+### Shell editing
+
+| Action | Shortcut |
+| :--- | :--- |
+| Jump word left / right | `Opt + Left` / `Opt + Right` |
+| Jump to line start / end | `Cmd + Left` / `Cmd + Right` |
+| Delete to line start | `Cmd + Backspace` |
+| Delete word | `Opt + Backspace` |
+| Newline without execute | `Cmd + Enter` or `Shift + Enter` |
+
+### Font size
+
+| Action | Shortcut |
+| :--- | :--- |
+| Increase | `Cmd + =` |
+| Decrease | `Cmd + -` |
+| Reset | `Cmd + 0` |
+
+### Kaku features
+
+| Action | Shortcut |
+| :--- | :--- |
+| Clear screen + scrollback | `Cmd + K` |
+| Open Settings panel | `Cmd + ,` |
+| Open AI panel | `Cmd + Shift + A` |
+| Open AI Chat | `Cmd + L` |
+| Apply Kaku Assistant suggestion | `Cmd + Shift + E` |
+| Open lazygit | `Cmd + Shift + G` |
+| Open yazi file manager | `Cmd + Shift + Y` |
+| Browse remote files (SSH) | `Cmd + Shift + R` |
+| Open Doctor panel | `Ctrl + Shift + L` |
+
+### Mouse
+
+| Action | Trigger |
+| :--- | :--- |
+| Copy selection to clipboard | Release left mouse button after selecting |
+| Open link | `Cmd + Click` |
+| Move cursor to clicked column | `Opt + Click` (same row, shell prompt only) |
+
+## Adding custom keybindings
+
+<Warning>
+  Always use `table.insert` to append to `config.keys`. Never assign a new
+  table with `config.keys = { ... }` — this overwrites all of Kaku's default
+  bindings.
+</Warning>
+
+Add your bindings after loading the bundled config:
+
+```lua kaku.lua
+-- Navigate pane right
+table.insert(config.keys, {
+  key = 'RightArrow',
+  mods = 'CMD|SHIFT',
+  action = wezterm.action.ActivatePaneDirection('Right'),
+})
+
+-- Split pane horizontally
+table.insert(config.keys, {
+  key = 'Enter',
+  mods = 'CMD|OPT',
+  action = wezterm.action.SplitHorizontal({ domain = 'CurrentPaneDomain' }),
+})
+```
+
+## Rebinding Kaku features
+
+Kaku's built-in features are triggered through named events. To rebind AI Chat:
+
+```lua kaku.lua
+table.insert(config.keys, {
+  key = 'Space',
+  mods = 'CMD|SHIFT',
+  action = wezterm.action.EmitEvent('kaku-ai-chat'),
+})
+```
+
+To rebind the global window toggle:
+
+```lua kaku.lua
+table.insert(config.keys, {
+  key = 'k',
+  mods = 'CMD|OPT|CTRL',
+  action = wezterm.action.EmitEvent('toggle-global-window'),
+})
+```
+
+## Global hotkey on non-QWERTY keyboards
+
+The `Cmd + Opt + Ctrl + K` global hotkey uses the physical QWERTY key position, not the logical key label. On Colemak and other layouts, this corresponds to a different character. Use the remapping above, adjusting `key` to the physical key on your layout that you want to trigger the shortcut.
+
+<Note>
+  For the complete list of available key actions, see the [WezTerm KeyAssignment
+  reference](https://wezfurlong.org/wezterm/config/lua/keyassignment/).
+</Note>

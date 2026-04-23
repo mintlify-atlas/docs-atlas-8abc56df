@@ -1,0 +1,43 @@
+---
+title: "What is Kaku: the AI-first macOS terminal"
+description: "Kaku is a fast macOS terminal built for AI coding — a WezTerm fork with zero-config defaults, a built-in AI assistant, and a 40% smaller binary."
+---
+
+Kaku (書く, かく) is the Japanese word for writing — the act of putting thought into form. It is a deeply customized fork of WezTerm, built around practical defaults on day one while keeping full Lua customization and a fast, lightweight feel. Where most terminals ask you to configure your way into productivity, Kaku ships ready: JetBrains Mono, GPU-accelerated rendering, automatic dark/light mode switching, and a built-in AI assistant that translates natural language into shell commands, all without touching a config file.
+
+## What makes Kaku different
+
+Kaku is designed around three convictions: configuration should be optional, the terminal should understand AI coding workflows, and performance should never be sacrificed for features.
+
+- **Zero config out of the box** — JetBrains Mono, macOS font rendering, copy-on-select, clickable file paths, and tuned color overrides are all enabled by default.
+- **Built-in AI assistant** — Type `# <description>` at the prompt and Kaku sends the query to your LLM, injecting the resulting command back into the prompt for review. When a command fails, Kaku suggests a fix you can apply with `Cmd + Shift + E`.
+- **Curated shell suite** — Built-in zsh plugins plus optional CLI tools for prompt, diff, and navigation workflows, installed and wired up automatically on first launch.
+- **GPU-accelerated and lean** — The binary is ~40 MB, roughly 40% smaller than upstream WezTerm, with instant startup and a ~100 ms shell bootstrap.
+- **WezTerm-compatible config** — Any existing WezTerm Lua configuration works as-is; there is no migration step.
+
+## Part of a trilogy
+
+Kaku is the first of three tools built around the same philosophy of opinionated defaults and practical focus:
+
+- **[Kaku](https://github.com/tw93/Kaku)** (書く) — writes code. The terminal.
+- **[Waza](https://github.com/tw93/Waza)** (技) — drills habits. The practice tool.
+- **[Kami](https://github.com/tw93/Kami)** (紙) — ships documents. The publishing tool.
+
+Think of them as a family: Kaku is the dad, Waza the big sister, Kami the little sister.
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Install Kaku and run your first AI-assisted command in under five minutes.
+  </Card>
+  <Card title="AI assistant" icon="sparkles" href="/features/ai-assistant">
+    Learn natural language commands, error recovery, and AI provider setup.
+  </Card>
+  <Card title="Configuration" icon="sliders" href="/configuration/overview">
+    Customize themes, fonts, keybindings, and behavior with Lua.
+  </Card>
+  <Card title="CLI reference" icon="terminal" href="/cli/overview">
+    Explore `kaku ai`, `kaku config`, `kaku doctor`, and other commands.
+  </Card>
+</CardGroup>

@@ -1,0 +1,45 @@
+---
+title: "Kaku changelog and release history"
+description: "Where to find Kaku's full release notes on GitHub, plus a summary of the key milestones and feature areas shipped across the project's history."
+---
+
+Kaku's complete release notes, version tags, and downloadable assets live on the GitHub releases page. The milestones below summarize the major areas of work that have shipped since the project began — useful context for understanding what the project has focused on and how it has evolved.
+
+<Card
+  title="Full release history on GitHub"
+  icon="github"
+  href="https://github.com/tw93/Kaku/releases"
+>
+  Every release is tagged on GitHub with a full changelog, release notes, and signed DMG downloads for Apple Silicon and Intel.
+</Card>
+
+## Key milestones
+
+**Zero-config defaults**
+Kaku ships with JetBrains Mono, macOS subpixel font rendering, and low-resolution font sizing tuned for Retina displays. Themes switch automatically with the macOS dark/light mode preference, including tuned selection colors, font weight adjustments, and practical color overrides — no configuration required on first launch.
+
+**AI assistant integration**
+The built-in Kaku Assistant adds two modes: automatic error recovery (press `Cmd+Shift+E` to apply a suggested fix) and natural-language-to-command translation (prefix a prompt with `#`). An AI tools config page centralizes settings for Claude Code, Codex, Gemini CLI, Copilot CLI, Kimi Code, and other AI coding tools.
+
+**Curated shell suite**
+Kaku bundles `z` for directory jumping, `zsh-completions`, `zsh-syntax-highlighting`, and `zsh-autosuggestions`. Shell integration is set up automatically on first launch and verified by `kaku doctor`.
+
+**Lazygit and Yazi integrations**
+`Cmd+Shift+G` opens Lazygit in a floating overlay. `Cmd+Shift+Y` (or the `y` shell wrapper) opens Yazi with automatic directory sync on exit. Yazi's color theme syncs with Kaku's active terminal theme.
+
+**Remote SSH filesystem browsing**
+`Cmd+Shift+R` mounts a remote filesystem via sshfs and opens it in Yazi, enabling file browsing on remote hosts without leaving the terminal.
+
+**Binary size and startup**
+Kaku's executable is approximately 40% smaller than upstream WezTerm through aggressive symbol stripping and feature pruning. Startup is effectively instant via just-in-time initialization, and shell bootstrap time has been reduced from roughly 200 ms to roughly 100 ms.
+
+**Homebrew tap**
+Kaku is distributed through a dedicated tap to avoid conflicts with an unrelated older package also named `kaku` on the main Homebrew index:
+
+```bash
+brew install tw93/tap/kakuku
+```
+
+## Relationship to WezTerm
+
+Kaku is a deeply customized fork of [WezTerm](https://wezfurlong.org/wezterm/). It maintains full Lua configuration compatibility with WezTerm's API — existing WezTerm configs work without modification. Kaku diverges from upstream primarily in its defaults, shell integration, AI assistant layer, and binary size optimizations, rather than in the underlying rendering engine or configuration surface.

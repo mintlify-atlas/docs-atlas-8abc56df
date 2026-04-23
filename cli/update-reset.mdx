@@ -1,0 +1,132 @@
+---
+title: "kaku update and kaku reset commands"
+description: "Use kaku update to install the latest Kaku release, and kaku reset to remove shell integration and clean up Kaku-managed config and git defaults."
+---
+
+This page covers `kaku update`, `kaku reset`, and `kaku cli`. All three are available from the interactive menu or as direct subcommands.
+
+---
+
+## kaku update
+
+`kaku update` checks for a newer Kaku release and installs it automatically. For Homebrew-managed installations it delegates to `brew upgrade`. For direct installations it downloads the release zip, verifies the SHA-256 checksum, and replaces the app bundle in the background.
+
+<Note>
+`kaku update` is currently supported on **macOS only**.
+</Note>
+
+### Usage
+
+```bash
+kaku update
+```
+
+### What it does
+
+<Steps>
+  <Step title="Detect installation type">
+    If the current binary lives inside a Homebrew Caskroom path, or `KAKU_UPDATE_PROVIDER=brew` is set, Kaku delegates to `brew upgrade --cask tw93/tap/kakuku` and relaunches the app automatically.
+  </Step>
+  <Step title="Check for a newer version">
+    Queries the GitHub Releases API (`https://api.github.com/repos/tw93/Kaku/releases/latest`) and compares the latest tag with the running version. If already up to date, exits early.
+  </Step>
+  <Step title="Download and verify">
+    Downloads `kaku_for_update.zip` and verifies its SHA-256 checksum against `kaku_for_update.zip.sha256`. Aborts if the checksum does not match.
+  </Step>
+  <Step title="Apply in background">
+    Kaku quits, the update helper script replaces `Kaku.app`, refreshes shell integration via `kaku init --update-only`, and relaunches the app.
+  </Step>
+</Steps>
+
+### Homebrew fallback
+
+If you see Homebrew checksum errors, run the cask upgrade directly:
+
+```bash
+brew upgrade tw93/tap/kakuku
+```
+
+---
+
+## kaku reset
+
+`kaku reset` removes Kaku's shell integration and reverts Kaku-managed settings to factory defaults. Use it when you want a clean slate before re-running `kaku init`, or when you are uninstalling Kaku.
+
+<Note>
+`kaku reset` is currently supported on **macOS only**.
+</Note>
+
+<Warning>
+`kaku reset` removes shell integration from `~/.zshrc`, deletes managed init files, and removes Kaku-managed git defaults. Back up any customizations before running it. Optional tools installed via Homebrew (Starship, Delta, Lazygit, Yazi) are **not** removed — only their configuration references managed by Kaku are cleaned up.
+</Warning>
+
+### Usage
+
+```bash
+kaku reset
+```
+
+To skip the confirmation prompt (for scripted use):
+
+```bash
+kaku reset --yes
+```
+
+### What it removes
+
+| Item | Details |
+|---|---|
+| zsh integration | Removes `source` lines for `kaku.zsh` from `~/.zshrc` |
+| `~/.config/kaku/zsh/kaku.zsh` | Managed zsh init file |
+| fish integration | Removes `~/.config/fish/conf.d/kaku.fish` and `~/.config/kaku/fish/kaku.fish` |
+| kaku wrapper scripts | `~/.config/kaku/zsh/bin/kaku` and `~/.config/kaku/fish/bin/kaku` |
+| Kaku-managed git defaults | Unsets `core.pager`, `delta.*`, and related git config keys (only if they match the Kaku defaults exactly) |
+| Managed theme block | Strips the `-- ===== Kaku Theme Defaults (managed) =====` block from `kaku.lua` |
+| State files | `~/.config/kaku/state.json`, `lazygit_state.json`, legacy markers |
+
+After reset, Kaku prompts to restart your shell. If you confirm, it execs a new login shell. To restore integration at any time:
+
+```bash
+kaku init
+```
+
+---
+
+## kaku cli (multiplexer)
+
+`kaku cli` exposes the Kaku multiplexer over a Unix socket so that scripts and external tools can open panes, send text, rename tabs, and more — without any keyboard interaction.
+
+### Usage
+
+```bash
+kaku cli split-pane                          # split current pane
+kaku cli split-pane -- bash -c "echo hello"  # split and run a command
+kaku cli --help                              # list all subcommands
+kaku cli split-pane --help                   # help for a specific subcommand
+```
+
+### Available subcommands
+
+| Subcommand | Description |
+|---|---|
+| `activate-pane` | Focus a specific pane |
+| `activate-pane-direction` | Focus the adjacent pane in a given direction |
+| `activate-tab` | Switch to a specific tab |
+| `adjust-pane-size` | Resize a pane directionally |
+| `get-pane-direction` | Print the pane ID adjacent in a given direction |
+| `get-text` | Print the visible text content of a pane to stdout |
+| `kill-pane` | Close a pane |
+| `list` | List all windows, tabs, and panes |
+| `list-clients` | List connected clients |
+| `move-pane-to-new-tab` | Move a pane into a new tab |
+| `rename-workspace` | Rename the current workspace |
+| `send-text` | Send text to a pane as a paste |
+| `set-tab-title` | Change a tab's title |
+| `set-window-title` | Change a window's title |
+| `spawn` | Open a command in a new window or tab |
+| `split-pane` | Split the current pane (prints the new pane ID) |
+| `zoom-pane` | Zoom, unzoom, or toggle zoom state for a pane |
+
+<Tip>
+`kaku cli` is useful for integrating Kaku with AI tools or shell scripts that need to open panes or tabs programmatically — for example, having an AI agent open a split pane to show output alongside your editor.
+</Tip>

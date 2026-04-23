@@ -1,0 +1,52 @@
+---
+title: "Lazygit and Yazi integration in Kaku"
+description: "One-keystroke access to Lazygit (git UI) and Yazi (file manager) from any Kaku pane, with automatic theme sync for Yazi."
+---
+
+Kaku gives you instant access to Lazygit and Yazi without leaving the terminal. A single keyboard shortcut launches either tool in the current pane, and Yazi's color theme automatically stays in sync with Kaku's active color scheme so you never have to configure it manually.
+
+## Lazygit
+
+Press `Cmd + Shift + G` to launch Lazygit in the current pane. Kaku auto-detects the Lazygit binary from `PATH` or common Homebrew locations — no manual path configuration needed.
+
+When you open a pane inside a git repository that has uncommitted changes and you have not used Lazygit in that directory before, Kaku shows a one-time hint reminding you the shortcut is available.
+
+**Install Lazygit:**
+
+```bash
+brew install lazygit
+```
+
+Or install it as part of the full optional toolchain:
+
+```bash
+kaku init
+```
+
+## Yazi
+
+Press `Cmd + Shift + Y` to launch Yazi in the current pane.
+
+**Theme sync:** Kaku automatically writes `~/.config/yazi/theme.toml` to match the active color scheme — Kaku Dark or Kaku Light — whenever the theme changes. No manual Yazi theme setup is needed.
+
+**Install Yazi:**
+
+```bash
+brew install yazi
+```
+
+Or install via `kaku init`.
+
+## The `y` shell wrapper
+
+Use `y` instead of `yazi` to launch Yazi with working-directory sync on exit. When you navigate to a directory inside Yazi and quit, your shell prompt automatically moves to that directory.
+
+```bash
+y
+```
+
+The `y` wrapper requires Kaku's shell integration to be sourced. Verify it is active with `kaku doctor`.
+
+<Note>
+  `Cmd + Shift + Y` opens Yazi for local files. If you are inside an **SSH pane**, use `Cmd + Shift + R` instead to browse the remote filesystem via sshfs. The two shortcuts serve different purposes and are not interchangeable.
+</Note>

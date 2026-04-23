@@ -1,0 +1,89 @@
+{
+  "projectType": "saas",
+  "projectName": "Kaku",
+  "projectDescription": "A fast, out-of-the-box macOS terminal emulator built for AI-assisted coding, forked from WezTerm with curated defaults, GPU-accelerated rendering, and a built-in AI assistant.",
+  "theme": "luma",
+  "primaryColor": "#7c7c7c",
+  "lightColor": "#0a0a0a",
+  "darkColor": "#c7c7c7",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/ai-assistant",
+              "features/shell-suite",
+              "features/lazygit-yazi",
+              "features/remote-files"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "configuration/overview",
+              "configuration/appearance",
+              "configuration/keybindings",
+              "configuration/terminal-behavior"
+            ]
+          },
+          {
+            "group": "CLI Reference",
+            "pages": [
+              "cli/overview",
+              "cli/ai",
+              "cli/config",
+              "cli/doctor",
+              "cli/init",
+              "cli/update-reset"
+            ]
+          },
+          {
+            "group": "Help",
+            "pages": [
+              "faq",
+              "contributing",
+              "changelog"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Zero-config defaults with JetBrains Mono and macOS font rendering",
+    "Built-in AI assistant for error recovery and natural language command generation",
+    "Auto dark/light theme switching with macOS system appearance",
+    "Curated shell suite with zsh plugins, Starship, Delta, Lazygit, and Yazi",
+    "40% smaller binary with instant startup and GPU-accelerated rendering",
+    "Full WezTerm Lua config compatibility — no migration needed",
+    "SSH remote filesystem browsing via sshfs",
+    "Multiplexer CLI for scripting tab/pane control"
+  ],
+  "publicApiSurface": [
+    "kaku ai",
+    "kaku config",
+    "kaku doctor",
+    "kaku init",
+    "kaku update",
+    "kaku reset",
+    "kaku cli split-pane",
+    "kaku cli activate-pane",
+    "kaku cli activate-tab",
+    "kaku cli send-text",
+    "kaku cli list",
+    "kaku cli zoom-pane",
+    "~/.config/kaku/kaku.lua (Lua config file)",
+    "~/.config/kaku/assistant.toml (AI assistant config)"
+  ]
+}
